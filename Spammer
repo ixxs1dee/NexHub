@@ -1,0 +1,394 @@
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local ProximityPromptService = game:GetService("ProximityPromptService")
+
+local player = Players.LocalPlayer
+
+local v0 = getgenv and getgenv() or _G
+if not v0.__XD_SPAM_PANEL__ then
+    v0.__XD_SPAM_PANEL__ = true
+    
+    repeat
+        task.wait()
+    until game and game.IsLoaded and game:GetService("ReplicatedStorage")
+    
+    local l_Players_0 = game:GetService("Players")
+    local l_ReplicatedStorage_0 = game:GetService("ReplicatedStorage")
+    local l_LocalPlayer_0 = l_Players_0.LocalPlayer
+    
+    local v8 = {"rocket", "balloon", "inverse", "tiny"}
+    
+    local v20 = (function(v13)
+        if not v13 then v13 = 6 end
+        local v14 = os.clock()
+        local l_Packages_0 = l_ReplicatedStorage_0:FindFirstChild("Packages")
+        
+        while true do
+            if not l_Packages_0 then
+                if v13 >= os.clock() - v14 then
+                    task.wait(0.1)
+                    l_Packages_0 = l_ReplicatedStorage_0:FindFirstChild("Packages")
+                else
+                    return nil
+                end
+            else
+                local v16 = l_Packages_0:FindFirstChild("Net")
+                while true do
+                    if not v16 then
+                        if v13 < os.clock() - v14 then
+                            return nil
+                        else
+                            task.wait(0.1)
+                            v16 = l_Packages_0:FindFirstChild("Net")
+                        end
+                    else
+                        local v17 = v16:FindFirstChild("RE/AdminPanelService/ExecuteCommand")
+                        local v18 = v14 + v13
+                        
+                        while not v17 and os.clock() < v18 do
+                            task.wait(0.1)
+                            local v19 = l_Packages_0:FindFirstChild("Net")
+                            if v19 then
+                                v17 = v19:FindFirstChild("RE/AdminPanelService/ExecuteCommand")
+                            end
+                        end
+                        return v17
+                    end
+                end
+            end
+        end
+    end)(6)
+    
+    if not v20 or not v20:IsA("RemoteEvent") then
+        return
+    end
+    
+    local function spamPlayer(targetPlayer)
+        if targetPlayer and targetPlayer.Parent == l_Players_0 then
+            task.spawn(function()
+                for _, cmd in ipairs(v8) do
+                    pcall(function()
+                        v20:FireServer(targetPlayer, cmd)
+                    end)
+                end
+            end)
+        end
+    end
+    
+    getgenv().NexHub_SpamPlayer = spamPlayer
+    getgenv().NexHub_SpamRemote = v20
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "NexHub_GUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local main = Instance.new("Frame")
+main.Parent = gui
+main.Size = UDim2.new(0, 140, 0, 220)
+main.Position = UDim2.new(0.5, -70, 0.5, -110)
+main.AnchorPoint = Vector2.new(0.5, 0.5)
+main.BackgroundColor3 = Color3.fromRGB(255,255,255)
+main.BackgroundTransparency = 0.2
+main.BorderSizePixel = 0
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0,8)
+
+local stroke = Instance.new("UIStroke", main)
+stroke.Color = Color3.fromRGB(0,0,0)
+stroke.Thickness = 1
+
+main.Size = UDim2.new(0, 0, 0, 0)
+TweenService:Create(
+	main,
+	TweenInfo.new(0.45, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+	{Size = UDim2.new(0, 140, 0, 220)}
+):Play()
+
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1, -10, 0, 26)
+title.Position = UDim2.new(0, 5, 0, 5)
+title.BackgroundTransparency = 1
+title.Text = "NexHub | AP Spammer"
+title.Font = Enum.Font.GothamSemibold
+title.TextSize = 10
+title.TextColor3 = Color3.fromRGB(30,30,30)
+title.TextTransparency = 1
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextYAlignment = Enum.TextYAlignment.Center
+
+TweenService:Create(
+	title,
+	TweenInfo.new(0.4, Enum.EasingStyle.Quint),
+	{TextTransparency = 0}
+):Play()
+
+local line = Instance.new("Frame")
+line.Parent = main
+line.Position = UDim2.new(0, 5, 0, 30)
+line.Size = UDim2.new(1, -10, 0, 1)
+line.BackgroundColor3 = Color3.fromRGB(0,0,0)
+line.BackgroundTransparency = 0.7
+
+local content = Instance.new("Frame")
+content.Parent = main
+content.Name = "Content"
+content.Position = UDim2.new(0, 5, 0, 35)
+content.Size = UDim2.new(1, -10, 0, 135)
+content.BackgroundTransparency = 1
+
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Parent = content
+scrollFrame.Size = UDim2.new(1, 0, 1, 0)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 4
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Parent = scrollFrame
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 3)
+
+local function createPlayerButton(targetPlayer)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 0, 22)
+    button.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+    button.BackgroundTransparency = 0.5
+    button.Text = targetPlayer.Name
+    button.Font = Enum.Font.Gotham
+    button.TextSize = 10
+    button.TextColor3 = Color3.fromRGB(30, 30, 30)
+    button.TextXAlignment = Enum.TextXAlignment.Left
+    button.Parent = scrollFrame
+    
+    local padding = Instance.new("UIPadding", button)
+    padding.PaddingLeft = UDim.new(0, 5)
+    
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 4)
+    
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), {
+            BackgroundTransparency = 0.3,
+            BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+        }):Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), {
+            BackgroundTransparency = 0.5,
+            BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+        }):Play()
+    end)
+    
+    button.MouseButton1Click:Connect(function()
+        if getgenv().NexHub_SpamPlayer then
+            getgenv().NexHub_SpamPlayer(targetPlayer)
+        end
+    end)
+    
+    return button
+end
+
+local function updatePlayersList()
+    for _, child in ipairs(scrollFrame:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+    
+    local playersList = {}
+    for _, plr in ipairs(Players:GetPlayers()) do
+        if plr ~= player then
+            table.insert(playersList, plr)
+        end
+    end
+    
+    table.sort(playersList, function(a, b)
+        return a.Name:lower() < b.Name:lower()
+    end)
+    
+    for _, plr in ipairs(playersList) do
+        createPlayerButton(plr)
+    end
+    
+    task.wait()
+    local contentSize = listLayout.AbsoluteContentSize
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, contentSize.Y + 5)
+end
+
+task.spawn(function()
+    while true do
+        updatePlayersList()
+        task.wait(3)
+    end
+end)
+
+local line2 = Instance.new("Frame")
+line2.Parent = main
+line2.Position = UDim2.new(0, 5, 0, 175)
+line2.Size = UDim2.new(1, -10, 0, 1)
+line2.BackgroundColor3 = Color3.fromRGB(0,0,0)
+line2.BackgroundTransparency = 0.7
+
+local toggleFrame = Instance.new("Frame")
+toggleFrame.Parent = main
+toggleFrame.Position = UDim2.new(0, 5, 0, 180)
+toggleFrame.Size = UDim2.new(1, -10, 0, 30)
+toggleFrame.BackgroundTransparency = 1
+
+local toggleLabel = Instance.new("TextLabel")
+toggleLabel.Parent = toggleFrame
+toggleLabel.Size = UDim2.new(0.6, 0, 1, 0)
+toggleLabel.BackgroundTransparency = 1
+toggleLabel.Text = "Auto Spam"
+toggleLabel.Font = Enum.Font.Gotham
+toggleLabel.TextSize = 10
+toggleLabel.TextColor3 = Color3.fromRGB(30, 30, 30)
+toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local toggleButton = Instance.new("Frame")
+toggleButton.Parent = toggleFrame
+toggleButton.Position = UDim2.new(1, -28, 0, 8)
+toggleButton.Size = UDim2.new(0, 24, 0, 12)
+toggleButton.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+toggleButton.BorderSizePixel = 0
+
+Instance.new("UICorner", toggleButton).CornerRadius = UDim.new(1, 0)
+
+local toggleKnob = Instance.new("Frame")
+toggleKnob.Parent = toggleButton
+toggleKnob.Position = UDim2.new(0, 2, 0, 2)
+toggleKnob.Size = UDim2.new(0, 8, 0, 8)
+toggleKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+toggleKnob.BorderSizePixel = 0
+
+Instance.new("UICorner", toggleKnob).CornerRadius = UDim.new(1, 0)
+
+local toggleState = false
+
+local function updateToggle()
+    if toggleState then
+        TweenService:Create(toggleKnob, TweenInfo.new(0.2), {
+            Position = UDim2.new(1, -10, 0, 2),
+            BackgroundColor3 = Color3.fromRGB(100, 255, 100)
+        }):Play()
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+        }):Play()
+    else
+        TweenService:Create(toggleKnob, TweenInfo.new(0.2), {
+            Position = UDim2.new(0, 2, 0, 2),
+            BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        }):Play()
+        TweenService:Create(toggleButton, TweenInfo.new(0.2), {
+            BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+        }):Play()
+    end
+end
+
+local function findNearestPlayer()
+    local nearestPlayer = nil
+    local shortestDistance = math.huge
+    local playerPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
+    
+    if not playerPosition then return nil end
+    
+    for _, otherPlayer in ipairs(Players:GetPlayers()) do
+        if otherPlayer ~= player and otherPlayer.Character then
+            local humanoidRootPart = otherPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                local distance = (playerPosition - humanoidRootPart.Position).Magnitude
+                if distance < shortestDistance then
+                    shortestDistance = distance
+                    nearestPlayer = otherPlayer
+                end
+            end
+        end
+    end
+    
+    return nearestPlayer
+end
+
+local function onProximityPromptTriggered(prompt)
+    if not toggleState then return end
+    
+    local promptParent = prompt.Parent
+    if promptParent and promptParent.Name == "PromptAttachment" then
+        local nearestPlayer = findNearestPlayer()
+        if nearestPlayer and getgenv().NexHub_SpamPlayer then
+            getgenv().NexHub_SpamPlayer(nearestPlayer)
+        end
+    end
+end
+
+ProximityPromptService.PromptTriggered:Connect(onProximityPromptTriggered)
+
+toggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        toggleState = not toggleState
+        updateToggle()
+    end
+end)
+
+updateToggle()
+
+local dragging = false
+local dragStart, startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	TweenService:Create(
+		main,
+		TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+		{Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)}
+	):Play()
+end
+
+main.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1
+	or input.UserInputType == Enum.UserInputType.Touch then
+
+		dragging = true
+		dragStart = input.Position
+		startPos = main.Position
+
+		TweenService:Create(
+			main,
+			TweenInfo.new(0.12),
+			{BackgroundTransparency = 0.1}
+		):Play()
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+				TweenService:Create(
+					main,
+					TweenInfo.new(0.15),
+					{BackgroundTransparency = 0.2}
+				):Play()
+			end
+		end)
+	end
+end)
+
+UIS.InputChanged:Connect(function(input)
+	if dragging and (
+		input.UserInputType == Enum.UserInputType.MouseMovement
+		or input.UserInputType == Enum.UserInputType.Touch
+	) then
+		update(input)
+	end
+end)
+
+updatePlayersList()
